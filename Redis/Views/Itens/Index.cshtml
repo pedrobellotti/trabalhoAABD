@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Redis.Models.Item>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.nomeItem)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.nomeItem)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.codItem }) |
+            @Html.ActionLink("Details", "Details", new { id=item.codItem }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.codItem })
+        </td>
+    </tr>
+}
+
+</table>
