@@ -29,6 +29,7 @@ def conectaRedis():
 
 
 def criaProdutos(r):
+    print("--Criando produtos--")
     #Adiciona itens no banco
     r.hset("prod:1", "nome", "Arroz")
     r.hset("prod:1", "desc", "Arroz branco")
@@ -59,16 +60,39 @@ def main():
         print("Erro ao conectar banco - aplicação encerrada!")
         return
 
+    #Limpa o banco
+    #redis.flushall()
+    #Cria os produtos
     criaProdutos(redis)
 
-    #Faz as pesquisas
-    print(redis.hgetall("prod:1")) #Pesquisa um produto
-    print(redis.zrangebyscore("lista_preco", 0, 30)) #Pesquisa por produtos em um range de preço
-    '''
-    lista = redis.zscan("lista_prod")
-    for i in lista:
-        print (i)
-    '''
+    #Faz as consultas
+    print("--Fazendo as consultas--")
+
+    #Pesquisa um produto
+    print("\n--Consulta 1: um produto especifico--")
+    print(redis.hgetall("prod:1")) 
+
+    #Faz o "select * from Produto"
+    print("\n--Consulta 2: todos os produtos--")
+    lista = redis.scan(match="prod:*")[1]
+    for item in lista:
+        print(redis.hgetall(item))
+
+    #Pesquisa por produtos em um range de preço
+    print("\n--Consulta 3: produtos dentro de um range de preço--")
+    lista = redis.zrangebyscore("lista_preco", 0, 20)
+    for item in lista:
+        print(redis.hgetall(item))
+
+    #Busca por todos os produtos ordenados pelo preço
+    print("\n--Consulta 4: todos os produtos ordenados pelo preço (menor para o maior)--")
+    lista = redis.zrangebyscore("lista_preco", 0, float('inf'))
+    for item in lista:
+        print(redis.hgetall(item))
+    
+    #Busca por quantos produtos existem registrados
+    print("\n--Consulta 5: quantidade de produtos registrados--")
+    print(len(redis.keys("prod:*")))
 
     #Desliga o banco
     #r.shutdown()
